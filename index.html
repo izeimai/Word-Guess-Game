@@ -76,7 +76,7 @@
         document.onkeyup = function (event) {
 
             // Determines which key was pressed
-            var pressedKey = event.key;
+            var pressedKey = (event.key).toLowerCase();
 
             if (alphabet.indexOf(pressedKey) == -1) { // Not an alphabet key
                 alert("Pressed a key that is not a letter of the alphabet");
