@@ -40,6 +40,9 @@ function newUnderscore() {
 // Generate the initial answer to Mystery word by calling function newUnderscore
 newUnderscore();
 
+// Displays the initial number of guesses remaining (should be 10)
+displayGuessLeft.textContent = numRemain;
+
 // This function is run whenever the user presses a key
 document.onkeyup = function (event) {
 
