@@ -5,12 +5,14 @@ var alphabet = "abcdefghijklmnopqrstuvwxyz"; // All the possible valid key press
 var answer = ""; /// Chosen word (empty string to start with)
 var numRemain = 10;
 var numCorrect = 0;
+var gameWin = 0;
 var incorrectGuesses = [];
 var underscores = [];
 
 // Display in HTML
 var displayMysteryWord = document.getElementById("mysteryWord");
 var displayGuessLeft = document.getElementById("guessLeft");
+var displayGamesWon = document.getElementById("gamesWon");
 var displayGuessedLetters = document.getElementById("guessedLetters");
 
 
@@ -40,8 +42,9 @@ function newUnderscore() {
 // Generate the initial answer to Mystery word by calling function newUnderscore
 newUnderscore();
 
-// Displays the initial number of guesses remaining (should be 10)
+// Displays the initial numbers for displayed variables (10 for guesses remaining, 0 for number of games won)
 displayGuessLeft.textContent = numRemain;
+displayGamesWon.textContent = gameWin;
 
 // This function is run whenever the user presses a key
 document.onkeyup = function (event) {
@@ -81,6 +84,8 @@ document.onkeyup = function (event) {
         confirm("YOU WON! Mystery word was: " + answer);
         resetGame();
         newUnderscore();
+        gameWin++;
+        displayGamesWon.textContent = gameWin;
     }
 
 }; // close key event
