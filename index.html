@@ -12,12 +12,16 @@
 <body>
     <div id="game">
 
-        <!-- Aesthetic pieces in the browser (put back in for last step)
-        <h1>Welcome to the Game!</h1>
-        <h2>Guess the word</h2>
-        -->
-        <h2>Number of Guesses remaining: <span id="guessLeft">10</span></h2>
+
+        <h1>Word Guess Game!</h1>
+        <h2>Guess the word by using your keyboard keys</h2>
+        <p>You will get pop-up alerts if you guess the same letter twice or chose a non-alphabet key</p>
+        <p>Ten guesses to answer the mystery word or game over alert</p>
+        <br>
+        <h1>Mystery word: <span id="mysteryWord"></span></h1>
+        <h2>Number of Guesses remaining: <span id="guessLeft"></span></h2>
         <h2>Letters already guessed: <span id="guessedLetters"></span></h2>
+
 
     </div>
 
@@ -25,63 +29,90 @@
     and use src atribute of the script tag to link to that game.js file-->
     <script type="text/javascript">
 
-        // Array of word options to randomly choose from
-        var options = ["apple", "banana", "car"];
-        // All the possible valid key presses (alphabet)
-        var alphabet = "abcdefghijklmnopqrstuvwxyz";
-
-        // Counters
+        // Variables
+        var options = ["apple", "banana", "car"]; // Array of word options to randomly choose from
+        var alphabet = "abcdefghijklmnopqrstuvwxyz"; // All the possible valid key presses (alphabet)
+        var answer = ""; /// Chosen word (empty string to start with)
         var numRemain = 10;
         var numCorrect = 0;
+        var incorrectGuesses = [];
+        var underscores = [];
+
+        // Display in HTML
+        var displayMysteryWord = document.getElementById("mysteryWord");
         var displayGuessLeft = document.getElementById("guessLeft");
         var displayGuessedLetters = document.getElementById("guessedLetters");
-        var guessed = [];
-
-        // Randomly chooses an answer from the options array
-        var answer = options[Math.floor(Math.random() * options.length)];
 
 
-        // Make a empty array and replaces it with underscores for each character of the answer
-        var display = [];
-        for (var i = 0; i < answer.length; i++) {
-            display.push(" _");
+        // Function resetGame refresh counters and display
+        function resetGame() {
+            numRemain = 10;
+            numCorrect = 0;
+            incorrectGuesses = [];
+            displayGuessLeft.textContent = numRemain;
+            displayGuessedLetters.textContent = incorrectGuesses;
         }
-        // displays without commas separating each item
-        document.write(display.join(""));
 
-        //while ((numRemain > 0) || (numCorrect < answer.length)) {
+        // Function newUnderscore randomly chooses an answer from the options array and generates an equal array of underscores
+        function newUnderscore() {
+            answer = options[Math.floor(Math.random() * options.length)];
+            console.log("Answer inside function :" + answer);
+            underscores = []; // reset the underscores
 
-            // This function is run whenever the user presses a key
-            document.onkeyup = function (event) {
+            // Number of letters in answer correspond to the number of underscores
+            for (var i = 0; i < answer.length; i++) {
+                underscores.push(" _");
+            }
 
-                // Determines which key was pressed
-                var guess = event.key;
+            // displays without commas separating each item
+            displayMysteryWord.textContent = underscores.join("");
+        }
 
-                if (alphabet.indexOf(guess) == -1) {
-                    alert("Pressed a key that is not a letter of the alphabet");
-                } else if (guessed.indexOf(guess) > -1) {
-                    alert("Already guessed this letter");
-                } else if (answer.indexOf(guess) > -1) { // matches
-                    for (var i = 0; i < answer.length; i++) {
-                        if (answer[i] === guess) {
-                            display[i] = answer[i];
-                            document.write(display.join(""));
-                            numCorrect++;
-                        }
+
+        // Generate the initial answer to Mystery word by calling function newUnderscore
+        newUnderscore();
+
+        // This function is run whenever the user presses a key
+        document.onkeyup = function (event) {
+
+            // Determines which key was pressed
+            var pressedKey = event.key;
+
+            if (alphabet.indexOf(pressedKey) == -1) { // Not an alphabet key
+                alert("Pressed a key that is not a letter of the alphabet");
+            } else if (incorrectGuesses.indexOf(pressedKey) > -1) { // Key already listed in incorrect guesses
+                alert("Already guessed this incorrect letter");
+            } else if (underscores.indexOf(pressedKey) > -1) { // Key already used and was correct
+                alert("Already guessed this correct letter");
+            } else if (answer.indexOf(pressedKey) > -1) { // Key matches answer
+                for (var i = 0; i < answer.length; i++) { // Checks each letter
+                    if (answer[i] === pressedKey) {
+                        underscores[i] = answer[i];
+                        numCorrect++;
                     }
-                } else { // not a match
-                    guessed.push(guess);
-                    numRemain--;
                 }
-                
-                console.log(numCorrect);
-                console.log(numRemain);
-                displayGuessLeft.textContent = numRemain;
-                displayGuessedLetters.textContent = guessed;
+            } else { // Key doesn't match the answer
+                incorrectGuesses.push(pressedKey);
+                numRemain--;
+            }
 
-            }; // close event
+            // update display with every key press
+            displayMysteryWord.textContent = underscores.join("");
+            displayGuessLeft.textContent = numRemain;
+            displayGuessedLetters.textContent = incorrectGuesses;
 
-        //} //close while
+            // End game conditions and reset if player ran out of guesses or got the answer
+            if (numRemain <= 0) { // no more guesses remaining
+                confirm("GAME OVER!! Mystery word was: " + answer);
+                resetGame();
+                newUnderscore();
+            } else if (numCorrect == answer.length) { // answered all the characters in the mystery word
+                confirm("YOU WON! Mystery word was: " + answer);
+                resetGame();
+                newUnderscore();
+            }
+
+        }; // close key event
 
     </script>
 
